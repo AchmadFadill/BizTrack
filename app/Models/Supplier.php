@@ -17,7 +17,6 @@ class Supplier extends Model
         'phone',
         'email',
         'address',
-        'is_active',
     ];
 
     public function stockMovements(): HasMany

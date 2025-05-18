@@ -14,15 +14,12 @@ class Product extends Model
     protected $fillable = [
         'name',
         'code',
-        'barcode',
         'description',
         'product_category_id',
         'purchase_price',
         'selling_price',
-        'alert_quantity',
         'unit',
         'image',
-        'is_active',
     ];
 
     public function category(): BelongsTo

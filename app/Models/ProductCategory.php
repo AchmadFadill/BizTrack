@@ -14,7 +14,6 @@ class ProductCategory extends Model
         'name',
         'code',
         'description',
-        'is_active',
     ];
 
     public function products(): HasMany

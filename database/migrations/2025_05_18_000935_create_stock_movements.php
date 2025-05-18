@@ -18,7 +18,6 @@ return new class extends Migration
             $table->enum('type', ['purchase', 'sale', 'return', 'adjustment', 'transfer']);
             $table->integer('quantity');
             $table->decimal('unit_price', 15, 2)->nullable();
-            $table->string('reference')->nullable();
             $table->text('notes')->nullable();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->timestamps();
