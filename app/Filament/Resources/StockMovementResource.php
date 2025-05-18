@@ -44,13 +44,10 @@ class StockMovementResource extends Resource
                 Forms\Components\Select::make('type')
                     ->label('Tipe')
                     ->options([
-                        'purchase' => 'Pembelian',
-                        'sale' => 'Penjualan',
-                        'return' => 'Pengembalian',
-                        'adjustment' => 'Penyesuaian',
-                        'transfer' => 'Transfer',
+                        'in'=> 'Masuk',
+                        'out'=> 'Keluar'
                     ])
-                    ->default('purchase')
+                    ->default('in')
                     ->required(),
                     
                 Forms\Components\TextInput::make('quantity')
@@ -93,19 +90,13 @@ class StockMovementResource extends Resource
                 Tables\Columns\BadgeColumn::make('type')
                     ->label('Tipe')
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'purchase' => 'Pembelian',
-                        'sale' => 'Penjualan',
-                        'return' => 'Pengembalian',
-                        'adjustment' => 'Penyesuaian',
-                        'transfer' => 'Transfer',
+                        'in'=> 'Masuk',
+                        'out'=> 'Keluar',
                         default => $state,
                     })
                     ->colors([
-                        'success' => 'purchase',
-                        'danger' => 'sale',
-                        'info' => 'return',
-                        'warning' => 'adjustment',
-                        'secondary' => 'transfer',
+                        'success' => 'in',
+                        'info' => 'out',
                     ])
                     ->sortable(),
                     
@@ -138,11 +129,8 @@ class StockMovementResource extends Resource
                 Tables\Filters\SelectFilter::make('type')
                     ->label('Tipe')
                     ->options([
-                        'purchase' => 'Pembelian',
-                        'sale' => 'Penjualan',
-                        'return' => 'Pengembalian',
-                        'adjustment' => 'Penyesuaian',
-                        'transfer' => 'Transfer',
+                        'in'=> 'Masuk',
+                        'out'=> 'Keluar'
                     ]),
                     
                 Tables\Filters\SelectFilter::make('product_id')

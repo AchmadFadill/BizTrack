@@ -52,20 +52,10 @@ class StockMovement extends Model
             
             // Update stok berdasarkan tipe pergerakan
             switch ($stockMovement->type) {
-                case 'purchase':
+                case 'in':
                     $productQuantity->increment('quantity', $stockMovement->quantity);
                     break;
-                case 'sale':
-                    $productQuantity->decrement('quantity', $stockMovement->quantity);
-                    break;
-                case 'return':
-                    $productQuantity->increment('quantity', $stockMovement->quantity);
-                    break;
-                case 'adjustment':
-                    // Adjustment bisa positif atau negatif
-                    $productQuantity->increment('quantity', $stockMovement->quantity);
-                    break;
-                case 'transfer':
+                case 'out':
                     $productQuantity->decrement('quantity', $stockMovement->quantity);
                     break;
             }

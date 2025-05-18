@@ -48,29 +48,11 @@ class ProductStockWidget extends BaseWidget
                     }),
                     
                 // Tambahkan tombol untuk melihat detail stok (opsional)
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->label('Terakhir Diperbarui')
-                    ->date('d M Y, H:i')
-                    ->sortable()
-                    ->toggleable(),
+
             ])
             ->filters([
                 // Tambahkan filter untuk melihat produk dengan stok rendah
-                Tables\Filters\SelectFilter::make('stock_status')
-                    ->label('Status Stok')
-                    ->options([
-                        'out_of_stock' => 'Stok Habis',
-                        'low_stock' => 'Stok Rendah',
-                        'in_stock' => 'Tersedia',
-                    ])
-                    ->query(function (Builder $query, array $data) {
-                        return match ($data['value']) {
-                            'out_of_stock' => $query->where('product_quantities.quantity', '<=', 0),
-                            'low_stock' => $query->whereBetween('product_quantities.quantity', [1, 10]),
-                            'in_stock' => $query->where('product_quantities.quantity', '>', 10),
-                            default => $query,
-                        };
-                    }),
+
                     
                 // Filter berdasarkan kategori (sesuaikan dengan struktur tabel Anda)
                 Tables\Filters\SelectFilter::make('category_id')
@@ -80,24 +62,7 @@ class ProductStockWidget extends BaseWidget
                     ->preload(),
             ])
             ->actions([
-                // Tambahkan tombol untuk melihat detail produk
-                Tables\Actions\Action::make('view_stock_history')
-                    ->label('Riwayat Stok')
-                    ->url(fn (Product $record) => route('filament.admin.resources.stock-movements.index', [
-                        'tableFilters[product_id][value]' => $record->id
-                    ]))
-                    ->icon('heroicon-o-arrow-path')
-                    ->color('info'),
-                    
-                // Tambahkan tombol untuk menambah stok
-                Tables\Actions\Action::make('add_stock')
-                    ->label('Tambah Stok')
-                    ->url(fn (Product $record) => route('filament.admin.resources.stock-movements.create', [
-                        'product_id' => $record->id,
-                        'type' => 'purchase'
-                    ]))
-                    ->icon('heroicon-o-plus')
-                    ->color('success'),
+
             ])
             ->bulkActions([
                 // Opsional: Tambahkan bulk action jika diperlukan

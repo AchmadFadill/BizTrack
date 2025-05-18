@@ -76,24 +76,13 @@ class StockMovementObserver
         
         // Lakukan perubahan berdasarkan tipe pergerakan
         switch ($stockMovement->type) {
-            case 'purchase':
+            case 'in':
                 $productQuantity->quantity += $stockMovement->quantity;
                 break;
-            case 'sale':
+            case 'out':
                 $productQuantity->quantity -= $stockMovement->quantity;
                 break;
-            case 'return':
-                // Pengembalian barang kembali ke stok
-                $productQuantity->quantity += $stockMovement->quantity;
-                break;
-            case 'adjustment':
-                // Adjustment bisa positif atau negatif
-                $productQuantity->quantity += $stockMovement->quantity;
-                break;
-            case 'transfer':
-                // Transfer biasanya memindahkan barang ke lokasi lain
-                $productQuantity->quantity -= $stockMovement->quantity;
-                break;
+
         }
 
         // Simpan perubahan
@@ -120,21 +109,13 @@ class StockMovementObserver
         }
 
         switch ($type) {
-            case 'purchase':
+            case 'in':
                 $productQuantity->quantity -= $quantity;
                 break;
-            case 'sale':
+            case 'out':
                 $productQuantity->quantity += $quantity;
                 break;
-            case 'return':
-                $productQuantity->quantity -= $quantity;
-                break;
-            case 'adjustment':
-                $productQuantity->quantity -= $quantity;
-                break;
-            case 'transfer':
-                $productQuantity->quantity += $quantity;
-                break;
+
         }
 
         $productQuantity->save();

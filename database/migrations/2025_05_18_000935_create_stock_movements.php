@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->foreignId('supplier_id')->nullable()->constrained()->nullOnDelete();
-            $table->enum('type', ['purchase', 'sale', 'return', 'adjustment', 'transfer']);
+            $table->enum('type', ['in', 'out']);
             $table->integer('quantity');
             $table->decimal('unit_price', 15, 2)->nullable();
             $table->text('notes')->nullable();
