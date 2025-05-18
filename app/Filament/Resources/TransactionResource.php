@@ -20,6 +20,8 @@ class TransactionResource extends Resource
     protected static ?string $model = Transaction::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    
+    protected static ?string $navigationGroup = 'Finance Management';
 
     public static function form(Form $form): Form
     {
@@ -37,11 +39,9 @@ class TransactionResource extends Resource
                     ->required()
                     ->numeric(),
                 Forms\Components\TextInput::make('note')
-                    ->required()
                     ->maxLength(255),
                 Forms\Components\FileUpload::make('image')
-                    ->image()
-                    ->required(),
+                    ->image(),
             ]);
     }
 

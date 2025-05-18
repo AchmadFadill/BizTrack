@@ -1,139 +1,161 @@
 <?php
-
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\StockMovementResource\Pages;
-use App\Filament\Resources\StockMovementResource\RelationManagers;
 use App\Models\StockMovement;
+use App\Models\Product;
+use App\Models\Supplier;
 use Filament\Forms;
-use Filament\Forms\Components\BelongsToSelect;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Tables;
-use Filament\Tables\Columns\BelongsToColumn;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class StockMovementResource extends Resource
 {
     protected static ?string $model = StockMovement::class;
-
+    
     protected static ?string $navigationIcon = 'heroicon-o-arrows-right-left';
 
     protected static ?string $navigationGroup = 'Inventory Management';
 
+    protected static ?string $navigationLabel = 'Stok Keluar dan Masuk';
     
     protected static ?int $navigationSort = 5;
 
-    public static function form(Forms\Form $form): Forms\Form
+    public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                BelongsToSelect::make('product_id')
+                Forms\Components\Select::make('product_id')
                     ->label('Produk')
-                    ->relationship('product', 'name')
-                    ->required()
-                    ->searchable(),
-                BelongsToSelect::make('supplier_id')
-                    ->label('Supplier')
-                    ->relationship('supplier', 'name')
-                    ->searchable(),
-                Select::make('type')
+                    ->options(Product::pluck('name', 'id'))
+                    ->searchable()
+                    ->required(),
+                    
+                Forms\Components\Select::make('supplier_id')
+                    ->label('Pemasok')
+                    ->options(Supplier::pluck('name', 'id'))
+                    ->searchable()
+                    ->nullable(),
+                    
+                Forms\Components\Select::make('type')
                     ->label('Tipe')
                     ->options([
-                        // purchase', 'sale', 'return', 'adjustment', 'transfer
                         'purchase' => 'Pembelian',
-                        'sale' => 'Penjualan', 
-                        'return' => 'Pengembalian', 
-                        'adjustment' => 'Penyesuaian', 
-                        'transfer' => 'Transfer', 
+                        'sale' => 'Penjualan',
+                        'return' => 'Pengembalian',
+                        'adjustment' => 'Penyesuaian',
+                        'transfer' => 'Transfer',
                     ])
+                    ->default('purchase')
                     ->required(),
-                TextInput::make('quantity')
-                    ->label('Kuantitas')
+                    
+                Forms\Components\TextInput::make('quantity')
+                    ->label('Jumlah')
                     ->numeric()
                     ->required(),
-                TextInput::make('unit_price')
-                    ->label('Harga Satuan')
-                    ->numeric(),
-                Textarea::make('notes')
-                    ->label('Catatan'),
-                BelongsToSelect::make('user_id')
-                    ->label('Pengguna')
-                    ->relationship('user', 'name')
-                    // ->disabled() // Biasanya diisi otomatis oleh sistem
-                    ->default(auth()->id())
-                    ->searchable(),
-            ]);
+                    
+                Forms\Components\TextInput::make('unit_price')
+                    ->label('Harga Per Unit')
+                    ->required()
+                    ->numeric()
+                    ->nullable(),
+                    
+                Forms\Components\Textarea::make('notes')
+                    ->label('Catatan')
+                    ->nullable(),
+                Forms\Components\Hidden::make('user_id')
+                    ->default(function () {
+                        return Auth::id();
+                    }),
+                ]);
+
     }
 
-    public static function table(Tables\Table $table): Tables\Table
+    public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('product.name')
+                Tables\Columns\TextColumn::make('product.name')
                     ->label('Produk')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('supplier.name')
-                    ->label('Supplier')
+                    
+                Tables\Columns\TextColumn::make('supplier.name')
+                    ->label('Pemasok')
                     ->searchable()
-                    ->sortable(),
-                TextColumn::make('type')
+                    ->sortable()
+                    ->toggleable(),
+                    
+                Tables\Columns\BadgeColumn::make('type')
                     ->label('Tipe')
                     ->formatStateUsing(fn (string $state): string => match ($state) {
                         'purchase' => 'Pembelian',
-                        'sale' => 'Penjualan', 
-                        'return' => 'Pengembalian', 
-                        'adjustment' => 'Penyesuaian', 
-                        'transfer' => 'Transfer', 
+                        'sale' => 'Penjualan',
+                        'return' => 'Pengembalian',
+                        'adjustment' => 'Penyesuaian',
+                        'transfer' => 'Transfer',
                         default => $state,
                     })
+                    ->colors([
+                        'success' => 'purchase',
+                        'danger' => 'sale',
+                        'info' => 'return',
+                        'warning' => 'adjustment',
+                        'secondary' => 'transfer',
+                    ])
                     ->sortable(),
-                TextColumn::make('quantity')
-                    ->label('Kuantitas')
+                    
+                Tables\Columns\TextColumn::make('quantity')
+                    ->label('Jumlah')
                     ->sortable(),
-                TextColumn::make('unit_price')
-                    ->label('Harga Satuan')
-                    ->money('IDR') // Sesuaikan dengan mata uang Anda
-                    ->sortable(),
-                TextColumn::make('notes')
+                    
+                Tables\Columns\TextColumn::make('unit_price')
+                    ->label('Harga Per Unit')
+                    ->money('IDR')
+                    ->sortable()
+                    ->toggleable(),
+                    
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Petugas')
+                    ->sortable()
+                    ->toggleable(),
+                    
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(),
+                    
+                Tables\Columns\TextColumn::make('notes')
                     ->label('Catatan')
-                    ->wrap(),
-                TextColumn::make('user.name')
-                    ->label('Pengguna')
-                    ->sortable(),
-                TextColumn::make('created_at')
-                    ->label('Tanggal')
-                    ->dateTime('d M Y H:i:s', timezone: 'Asia/Jakarta')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('type')
                     ->label('Tipe')
                     ->options([
                         'purchase' => 'Pembelian',
-                        'sale' => 'Penjualan', 
-                        'return' => 'Pengembalian', 
-                        'adjustment' => 'Penyesuaian', 
-                        'transfer' => 'Transfer', 
+                        'sale' => 'Penjualan',
+                        'return' => 'Pengembalian',
+                        'adjustment' => 'Penyesuaian',
+                        'transfer' => 'Transfer',
                     ]),
-                Tables\Filters\SelectFilter::make('product')
+                    
+                Tables\Filters\SelectFilter::make('product_id')
                     ->label('Produk')
-                    ->relationship('product', 'name')
+                    ->options(Product::pluck('name', 'id'))
                     ->searchable(),
-                Tables\Filters\SelectFilter::make('supplier')
-                    ->label('Supplier')
-                    ->relationship('supplier', 'name')
-                    ->searchable(),
-                Tables\Filters\SelectFilter::make('user')
-                    ->label('Pengguna')
-                    ->relationship('user', 'name')
-                    ->searchable(),
+                    
+                // Tables\Filters\DatePicker::make('created_at')
+                //     ->label('Tanggal'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

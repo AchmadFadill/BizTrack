@@ -34,4 +34,47 @@ class StockMovement extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+     protected static function booted()
+    {
+        static::created(function ($stockMovement) {
+            \Log::info('StockMovement created via model hook', [
+                'id' => $stockMovement->id,
+                'product_id' => $stockMovement->product_id
+            ]);
+            
+            $productQuantity = ProductQuantity::firstOrCreate(
+                ['product_id' => $stockMovement->product_id],
+                ['quantity' => 0]
+            );
+            
+            $oldQuantity = $productQuantity->quantity;
+            
+            // Update stok berdasarkan tipe pergerakan
+            switch ($stockMovement->type) {
+                case 'purchase':
+                    $productQuantity->increment('quantity', $stockMovement->quantity);
+                    break;
+                case 'sale':
+                    $productQuantity->decrement('quantity', $stockMovement->quantity);
+                    break;
+                case 'return':
+                    $productQuantity->increment('quantity', $stockMovement->quantity);
+                    break;
+                case 'adjustment':
+                    // Adjustment bisa positif atau negatif
+                    $productQuantity->increment('quantity', $stockMovement->quantity);
+                    break;
+                case 'transfer':
+                    $productQuantity->decrement('quantity', $stockMovement->quantity);
+                    break;
+            }
+            
+            \Log::info("Product quantity updated via model hook", [
+                'product_id' => $stockMovement->product_id,
+                'old_quantity' => $oldQuantity,
+                'new_quantity' => $productQuantity->quantity
+            ]);
+        });
+    }
 }

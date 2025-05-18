@@ -19,6 +19,9 @@ class CategoryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-c-list-bullet';
 
+    
+    protected static ?string $navigationGroup = 'Finance Management';
+
     public static function form(Form $form): Form
     {
         return $form

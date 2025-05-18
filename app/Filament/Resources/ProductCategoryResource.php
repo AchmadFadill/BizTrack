@@ -19,6 +19,8 @@ class ProductCategoryResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-folder';
 
     protected static ?string $navigationGroup = 'Inventory Management';
+
+    protected static ?string $navigationLabel = 'Kategori Produk';
     
     protected static ?int $navigationSort = 1;
 

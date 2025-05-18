@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ProductResource\Pages;
 
 use App\Filament\Resources\ProductResource;
+use App\Filament\Widgets\ProductStockWidget;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
@@ -16,4 +17,7 @@ class ListProducts extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+
+        // Tambahkan widget di halaman produk
+
 }
