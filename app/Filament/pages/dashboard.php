@@ -10,9 +10,19 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Pages\Dashboard as BaseDashboard;
 
+use Filament\Widgets;
+use Filament\Widgets\AccountWidget;
+
 class Dashboard extends BaseDashboard
 {
     use BaseDashboard\Concerns\HasFiltersForm;
+
+        protected function getHeaderWidgets(): array
+    {
+        return [
+            AccountWidget::class,
+        ];
+    }
 
 
     public function filtersForm(Form $form): Form

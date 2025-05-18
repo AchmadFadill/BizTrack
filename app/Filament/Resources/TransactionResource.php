@@ -23,6 +23,8 @@ class TransactionResource extends Resource
     
     protected static ?string $navigationGroup = 'Finance Management';
 
+        protected static ?string $navigationLabel = 'Transaksi';
+
     public static function form(Form $form): Form
     {
         return $form

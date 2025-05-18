@@ -17,7 +17,8 @@ class StatsOverview extends BaseWidget
 
     protected int | string | array $columnSpan = 'full';
     
-
+    
+    protected static ?int $sort = 1;
     public function form(Form $form): Form
     {
         return $form
