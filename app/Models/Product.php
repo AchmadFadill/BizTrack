@@ -37,18 +37,6 @@ class Product extends Model
         return $this->hasMany(ProductQuantity::class);
     }
 
-    // // Method untuk mendapatkan total stok saat ini
-    // public function getCurrentStock($warehouseId = null)
-    // {
-    //     $query = $this->quantities();
-        
-    //     if ($warehouseId) {
-    //         $query->where('warehouse_id', $warehouseId);
-    //     }
-        
-    //     return $query->sum('quantity');
-    // }
-
     // Method untuk mendapatkan nilai stok saat ini
     public function getStockValue()
     {

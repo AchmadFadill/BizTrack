@@ -16,6 +16,7 @@ class StatsOverview extends BaseWidget
     use InteractsWithPageFilters;
 
     protected int | string | array $columnSpan = 'full';
+    
 
     public function form(Form $form): Form
     {
