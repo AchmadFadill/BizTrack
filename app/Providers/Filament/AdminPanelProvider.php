@@ -29,8 +29,11 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->registration()    
             ->sidebarCollapsibleOnDesktop(true)
+            ->brandLogo(asset('images/logo2.png'))
+            ->brandLogoHeight('3.1rem')
+            ->favicon(asset('images/favicon.png'))
             ->colors([
-                'primary' => Color::Sky,
+                'primary' => Color::Yellow,
             ])
             ->font('Poppins')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
